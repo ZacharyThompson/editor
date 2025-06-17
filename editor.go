@@ -11,7 +11,8 @@ import (
 type Mode int
 
 const (
-	InsertMode Mode = iota + 1
+	NormalMode Mode = iota + 1
+	InsertMode
 	CommandMode
 )
 
@@ -24,7 +25,7 @@ type Editor struct {
 }
 
 func NewEditor(buf *[]string) Editor {
-	return Editor{NewCursor(0, 0), *buf, "", InsertMode, ""}
+	return Editor{NewCursor(0, 0), *buf, "", NormalMode, ""}
 }
 
 func (e *Editor) DeleteCharBeforeCursor() {
