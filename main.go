@@ -2,6 +2,8 @@ package main
 
 import (
 	// "fmt"
+	"log"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 	// "log"
 )
@@ -40,6 +42,14 @@ func main() {
 		}
 		if rl.IsKeyPressed(rl.KeyBackspace) {
 			editor.DeleteCharBeforeCursor()
+		}
+		// if rl.IsKeyPressed(rl.KeyLeftControl) && rl.IsKeyPressed(rl.KeyS) {
+		if rl.IsKeyPressed(rl.KeyS) {
+			// err := editor.SaveContents()
+			err := editor.SaveContentsToPath("hello.txt")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		rl.BeginDrawing()
