@@ -1,31 +1,10 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	// "log"
 )
-
-type Cursor struct {
-	line int
-	col  int
-}
-
-func NewCursor(line, col int) Cursor {
-	return Cursor{line: line, col: col}
-}
-func (c *Cursor) MoveLeft(count int) {
-	c.col = max(0, c.col-count)
-}
-func (c *Cursor) MoveRight(count, maxCol int) {
-	c.col = min(c.col+count, maxCol)
-}
-func (c *Cursor) MoveUp(count int) {
-	c.line = max(0, c.line-count)
-}
-func (c *Cursor) MoveDown(count int, maxLine int) {
-	c.line = min(c.line+count, maxLine)
-}
 
 func main() {
 	rl.SetConfigFlags(rl.FlagWindowResizable)
@@ -34,11 +13,11 @@ func main() {
 
 	rl.SetTargetFPS(120)
 
-	cursor := NewCursor(0, 0)
+	lines := SampleLines
+	editor := NewEditor(&lines)
+	cursor := &(editor.curs)
 	textHeight := 20
 	textSpacing := 1
-
-	lines := SampleLines
 
 	for !rl.WindowShouldClose() {
 		// screenWidth := rl.GetScreenWidth()
@@ -59,19 +38,23 @@ func main() {
 			cursor.MoveUp(1)
 			cursor.col = min(cursor.col, len(lines[cursor.line])-1)
 		}
+		if rl.IsKeyPressed(rl.KeyBackspace) {
+			editor.DeleteCharBeforeCursor()
+		}
 
 		rl.BeginDrawing()
 
-		rl.ClearBackground(rl.RayWhite)
+		rl.ClearBackground(rl.DarkGray)
 		for i, l := range lines {
-			rl.DrawTextEx(rl.GetFontDefault(), l, rl.Vector2{X: 0, Y: float32(i) * float32(textHeight)}, float32(textHeight), float32(textSpacing), rl.Black)
+			rl.DrawTextEx(rl.GetFontDefault(), l, rl.Vector2{X: 0, Y: float32(i) * float32(textHeight)}, float32(textHeight), float32(textSpacing), rl.RayWhite)
 			if cursor.line == i {
 				// stringWidth := rl.MeasureText(l[0:cursor.col], int32(textHeight))
 				stringSize := rl.MeasureTextEx(rl.GetFontDefault(), l[0:cursor.col], float32(textHeight), float32(textSpacing))
-				fmt.Println(stringSize)
+				// fmt.Println(stringSize)
 				cursorPos := rl.Vector2{X: stringSize.X, Y: float32(cursor.line * textHeight)}
 				cursorBottom := rl.Vector2{X: cursorPos.X, Y: cursorPos.Y + float32(textHeight)}
-				rl.DrawLineV(cursorPos, cursorBottom, rl.Red)
+				// rl.DrawLineV(cursorPos, cursorBottom, rl.Red)
+				rl.DrawLineEx(cursorPos, cursorBottom, 3, rl.Red)
 			}
 		}
 
